@@ -22,8 +22,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <strophe.h>
+
+int RedirStatus = 0;
+int pipeo2i[2];
+int pipei2o[2];
+int standardout;
+int standardin;
+pid_t pid;
+
+#define BUFFSIZE 2048
 
 
 int version_handler(xmpp_conn_t * const conn, xmpp_stanza_t * const stanza, void * const userdata)
@@ -94,26 +104,66 @@ int message_handler(xmpp_conn_t * const conn, xmpp_stanza_t * const stanza, void
 
 
 
-
-
-	replytext = malloc(strlen(" to you too!") + strlen(intext) + 1);
-	strcpy(replytext, intext);
-	strcat(replytext, " to you too!");
+	replytext = malloc(BUFFSIZE * sizeof(char));
+	char* templine;
+	char temptext[BUFFSIZE];
+	memset(temptext, '\n', BUFFSIZE);
 	
-	
+	write(pipeo2i[1], intext, strlen(intext));
+	write(pipeo2i[1], "\n", 1);
+
+	read(pipei2o[0], temptext, BUFFSIZE);
+
+	templine = strtok (temptext,"\n");
+	while(1){
+		
+		printf("%s", templine);
+		strcat(replytext, templine);
+		strcat(replytext, "\n");
+
+		templine = strtok (NULL, "\n");
+		if (templine == NULL)
+		{
+			break;
+		}
+
+	}
+
+	//printf("we are here!");
+	//fread(replytext, 1, BUFFSIZE, pipei2o[0]);
+	/*
+	int i;
+	for (i = 0; i < BUFFSIZE; ++i)
+	{
+		fgets(templine, BUFFSIZE, pipei2o[0]);
+		if (templine == NULL)
+			break;
+		sprintf(replytext, "<br>%s</br>", templine);
+		printf("%s\n", replytext);
+		i += strlen(templine) + 8;
+	}
+	*/
+	//printf("%s", replytext);
+
+	/*
+	if(!RedirStatus){
+
+		close(1);	//close redir out, and back to normal
+		dup(standardout);
+
+		close(0);	//close standard output
+		dup(standardin);
 
 
-
-
-
-
+	}
+	*/
 
 	text = xmpp_stanza_new(ctx);
 	xmpp_stanza_set_text(text, replytext);
 	xmpp_stanza_add_child(body, text);
 	xmpp_stanza_add_child(reply, body);
 	
-	xmpp_send(conn, reply);
+	if(strlen(replytext) > 0)xmpp_send(conn, reply);
 	xmpp_stanza_release(reply);
 	free(replytext);
 	return 1;
@@ -150,6 +200,43 @@ int main(int argc, char **argv)
     xmpp_conn_t *conn;
     xmpp_log_t *log;
     char *jid, *pass;
+
+
+
+
+
+	if(!RedirStatus){
+		pipe(pipeo2i);
+		pipe(pipei2o);
+
+		standardout = dup(1);
+		standardin  = dup(0);
+
+		RedirStatus = 1;
+
+		pid = fork();
+		if (pid >= 0) // fork succeeds
+		{
+			if (pid == 0) // child process
+			{
+				//signal(SIGINT, handler);
+			// Child will execv the command
+			
+			//setpgid(0, 0); only for backgrounded processes
+				close(0);
+				dup(pipeo2i[0]);
+				close(1);
+				dup(pipei2o[1]);
+				
+				execvp("bash", NULL);
+				exit(0);
+	     	}
+		}
+	}
+
+
+
+
 
     /* take a jid and password on the command line */
     if (argc != 3) {

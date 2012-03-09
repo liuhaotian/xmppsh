@@ -6,3 +6,11 @@ xmppsh.sublime-project
 xmppsh.sublime-workspace
 
 run.sh
+
+*.o
+
+test.c
+
+test
+
+xmppsh
