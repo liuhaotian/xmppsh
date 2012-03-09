@@ -15,7 +15,7 @@ SRCS = auth.c conn.c ctx.c event.c handler.c hash.c jid.c md5.c \
 		parser_libxml2.c \
 		sasl.c sha1.c snprintf.c sock.c stanza.c thread.c tls_openssl.c util.c
 OBJS = ${SRCS:.c=.o}
-PROJ = xmppsh bot
+PROJ = xmppsh bot active basic roster
 
 all: ${PROJ}
 
@@ -25,8 +25,17 @@ obj: ${OBJS}
 bot: ${OBJS}
 	${CC} ${CFLAGS} -o $@ ${LIBSTROPHE}/../examples/bot.c ${OBJS}
 
-xmppsh:
+active: ${OBJS}
+	${CC} ${CFLAGS} -o $@ ${LIBSTROPHE}/../examples/active.c ${OBJS}
 
+basic: ${OBJS}
+	${CC} ${CFLAGS} -o $@ ${LIBSTROPHE}/../examples/basic.c ${OBJS}
+
+roster: ${OBJS}
+	${CC} ${CFLAGS} -o $@ ${LIBSTROPHE}/../examples/roster.c ${OBJS}
+
+xmppsh: ${OBJS}
+	${CC} ${CFLAGS} -o $@ xmppsh.c ${OBJS}
 
 
 
@@ -100,5 +109,8 @@ util.o:
 	${CC} -c ${LIBSTROPHE}/util.c ${IFLAGS}
 
 clean:
+	${RM} -f ${PROJ}
+
+cleanall:
 	${RM} -f ${OBJS} ${PROJ}
 
