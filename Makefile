@@ -15,12 +15,31 @@ SRCS = auth.c conn.c ctx.c event.c handler.c hash.c jid.c md5.c \
 		parser_libxml2.c \
 		sasl.c sha1.c snprintf.c sock.c stanza.c thread.c tls_openssl.c util.c
 OBJS = ${SRCS:.c=.o}
-PROJ = xmppsh
+PROJ = xmppsh bot
 
-all: ${OBJS}
-	${CC} ${CFLAGS} -o ${PROJ} ${LIBSTROPHE}/../examples/bot.c ${OBJS}
+all: ${PROJ}
+
 
 obj: ${OBJS}
+
+bot: ${OBJS}
+	${CC} ${CFLAGS} -o $@ ${LIBSTROPHE}/../examples/bot.c ${OBJS}
+
+xmppsh:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 auth.o:
