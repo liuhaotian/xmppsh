@@ -9,7 +9,7 @@ PWD =
 
 LIBSTROPHE = libstrophe/src
 IFLAGS = -I${LIBSTROPHE}/.. -I/usr/local/include -I/usr/include
-CFLAGS =
+CFLAGS = -lssl -lxml2 -lresolv -Ilibstrophe
 
 SRCS = auth.c conn.c ctx.c event.c handler.c hash.c jid.c md5.c \
 		parser_libxml2.c \
@@ -18,7 +18,7 @@ OBJS = ${SRCS:.c=.o}
 PROJ = xmppsh
 
 all: ${OBJS}
-	${CC} ${CFLAGS} -o ${PROJ} bot.c ${OBJS} -lssl -lxml2 -lresolv
+	${CC} ${CFLAGS} -o ${PROJ} ${LIBSTROPHE}/../examples/bot.c ${OBJS}
 
 obj: ${OBJS}
 
@@ -81,5 +81,5 @@ util.o:
 	${CC} -c ${LIBSTROPHE}/util.c ${IFLAGS}
 
 clean:
-	${RM} -f ${OBJS}
+	${RM} -f ${OBJS} ${PROJ}
 
