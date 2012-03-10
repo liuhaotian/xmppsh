@@ -34,7 +34,7 @@ int standardout;
 int standardin;
 pid_t pid;
 
-#define BUFFSIZE 2048
+#define BUFFSIZE 20480
 
 
 int version_handler(xmpp_conn_t * const conn, xmpp_stanza_t * const stanza, void * const userdata)
@@ -84,7 +84,7 @@ int version_handler(xmpp_conn_t * const conn, xmpp_stanza_t * const stanza, void
 int message_handler(xmpp_conn_t * const conn, xmpp_stanza_t * const stanza, void * const userdata)
 {
 	xmpp_stanza_t *reply, *body, *text;
-	char *intext, *replytext;
+	char *intext;
 	xmpp_ctx_t *ctx = (xmpp_ctx_t*)userdata;
 	
 	if(!xmpp_stanza_get_child_by_name(stanza, "body")) return 1;
@@ -103,10 +103,12 @@ int message_handler(xmpp_conn_t * const conn, xmpp_stanza_t * const stanza, void
 	xmpp_stanza_set_name(body, "body");
 	
 	/*	declare the variable	*/
-	replytext = malloc(BUFFSIZE * sizeof(char));
+	
 	char* templine;
 	char temptext[BUFFSIZE];
+	char replytext[BUFFSIZE];
 	memset(temptext, 0, BUFFSIZE);
+	memset(replytext, 0, BUFFSIZE);
 	
 	/*	send the commmand to bash	*/
 	write(pipeo2i[1], intext, strlen(intext));
@@ -172,7 +174,6 @@ int message_handler(xmpp_conn_t * const conn, xmpp_stanza_t * const stanza, void
 	
 	if(strlen(replytext) > 0)xmpp_send(conn, reply);
 	xmpp_stanza_release(reply);
-	free(replytext);
 	return 1;
 }
 
