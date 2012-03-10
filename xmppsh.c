@@ -211,7 +211,9 @@ int main(int argc, char **argv)
     xmpp_ctx_t *ctx;
     xmpp_conn_t *conn;
     xmpp_log_t *log;
-    char *jid, *pass;
+    char *jid;
+    char pass[20];
+    int i;
 
 
 
@@ -253,13 +255,21 @@ int main(int argc, char **argv)
 
 
     /* take a jid and password on the command line */
-    if (argc != 3) {
-	fprintf(stderr, "Usage: bot <jid> <pass>\n\n");
+    if (argc < 2) {
+	fprintf(stderr, "Usage: xmppsh <jid@jabber.org> <pass>\n\n");
 	return 1;
     }
+    else if (argc == 2)
+    {
+    	jid = argv[1];
+    	strcpy(pass, getpass("password:"));
+    }
+    else
+    {
+    	jid = argv[1];
+    	strcpy(pass, argv[2]);
+    }
     
-    jid = argv[1];
-    pass = argv[2];
 
     /* init library */
     xmpp_initialize();
