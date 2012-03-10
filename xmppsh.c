@@ -29,6 +29,7 @@
 
 
 #include <strophe.h>
+#include <src/common.h>
 
 int RedirStatus = 0;
 int pipeo2i[2];
@@ -128,7 +129,7 @@ int message_handler(xmpp_conn_t * const conn, xmpp_stanza_t * const stanza, void
 		/*	test if finish	*/
 		write(pipeo2i[1], "echo $?", 7);
 		write(pipeo2i[1], "\n", 1);
-		sleep(1);
+		//sleep(1);
 		read(pipei2o[0], temptext, BUFFSIZE);
 
 		/*	completed, no further action to take	*/
@@ -300,7 +301,12 @@ int main(int argc, char **argv)
 
     /* enter the event loop - 
        our connect handler will trigger an exit */
-    xmpp_run(ctx);
+    //xmpp_run(ctx);
+    ctx->loop_status = XMPP_LOOP_RUNNING;
+    while (ctx->loop_status == XMPP_LOOP_RUNNING) {
+		xmpp_run_once(ctx, 1);
+		sleep(1);
+    }
 
     /* release our connection and context */
     xmpp_conn_release(conn);
