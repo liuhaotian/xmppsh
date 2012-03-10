@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 #include <strophe.h>
 
@@ -101,62 +102,68 @@ int message_handler(xmpp_conn_t * const conn, xmpp_stanza_t * const stanza, void
 	body = xmpp_stanza_new(ctx);
 	xmpp_stanza_set_name(body, "body");
 	
-
-
-
+	/*	declare the variable	*/
 	replytext = malloc(BUFFSIZE * sizeof(char));
 	char* templine;
 	char temptext[BUFFSIZE];
-	memset(temptext, '\n', BUFFSIZE);
+	memset(temptext, 0, BUFFSIZE);
 	
+	/*	send the commmand to bash	*/
 	write(pipeo2i[1], intext, strlen(intext));
 	write(pipeo2i[1], "\n", 1);
 
+	/*	get the result	*/
+	sleep(1);
 	read(pipei2o[0], temptext, BUFFSIZE);
 
-	templine = strtok (temptext,"\n");
-	while(1){
+	/*	if nothing return	*/
+	if(*temptext == 0){
 		
-		printf("%s", templine);
+		/*	test if finish	*/
+		write(pipeo2i[1], "echo $?", 7);
+		write(pipeo2i[1], "\n", 1);
+		sleep(1);
+		read(pipei2o[0], temptext, BUFFSIZE);
+
+		/*	completed, no further action to take	*/
+		if (*temptext == '0')
+		{
+			strcpy(temptext, "\n");
+		}
+		/*	get the previous result	*/
+		else if (*temptext != 0)
+		{
+			/*	clear the test '0' return	*/
+			templine = strrchr(temptext,'0');
+			memset(templine, 0, strlen(templine));
+		}
+		/*	not finish yet, use blocking mode to wait	*/
+		/*	future support signal control	*/
+		else
+		{
+			fcntl(pipei2o[0], F_SETFL, 0);
+			read(pipei2o[0], temptext, BUFFSIZE);
+			/*	back to nonblock mode again	*/
+			fcntl(pipei2o[0], F_SETFL, O_NONBLOCK);
+			templine = strrchr(temptext,'0');
+			memset(templine, 0, strlen(templine));
+		}
+
+
+	}
+
+	/*	format the output	*/
+	templine = strtok (temptext,"\n");
+	while(templine != NULL){
+
 		strcat(replytext, templine);
 		strcat(replytext, "\n");
 
 		templine = strtok (NULL, "\n");
-		if (templine == NULL)
-		{
-			break;
-		}
-
-	}
-
-	//printf("we are here!");
-	//fread(replytext, 1, BUFFSIZE, pipei2o[0]);
-	/*
-	int i;
-	for (i = 0; i < BUFFSIZE; ++i)
-	{
-		fgets(templine, BUFFSIZE, pipei2o[0]);
+		
 		if (templine == NULL)
 			break;
-		sprintf(replytext, "<br>%s</br>", templine);
-		printf("%s\n", replytext);
-		i += strlen(templine) + 8;
 	}
-	*/
-	//printf("%s", replytext);
-
-	/*
-	if(!RedirStatus){
-
-		close(1);	//close redir out, and back to normal
-		dup(standardout);
-
-		close(0);	//close standard output
-		dup(standardin);
-
-
-	}
-	*/
 
 	text = xmpp_stanza_new(ctx);
 	xmpp_stanza_set_text(text, replytext);
@@ -208,6 +215,8 @@ int main(int argc, char **argv)
 	if(!RedirStatus){
 		pipe(pipeo2i);
 		pipe(pipei2o);
+
+		fcntl(pipei2o[0], F_SETFL, O_NONBLOCK);
 
 		standardout = dup(1);
 		standardin  = dup(0);

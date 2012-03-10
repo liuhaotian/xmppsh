@@ -9,7 +9,7 @@ PWD =
 
 LIBSTROPHE = libstrophe/src
 IFLAGS = -I${LIBSTROPHE}/.. -I/usr/local/include -I/usr/include
-CFLAGS = -lssl -lxml2 -lresolv -Ilibstrophe
+CFLAGS = -lssl -lxml2 -lresolv -Ilibstrophe -Wall
 
 SRCS = auth.c conn.c ctx.c event.c handler.c hash.c jid.c md5.c \
 		parser_libxml2.c \

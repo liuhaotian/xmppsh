@@ -9,8 +9,6 @@ run.sh
 
 *.o
 
-test.c
-
-test
+test*
 
 xmppsh
