@@ -85,6 +85,22 @@ int version_handler(xmpp_conn_t * const conn, xmpp_stanza_t * const stanza, void
 	return 1;
 }
 
+int ping_handler(xmpp_conn_t * const conn, xmpp_stanza_t * const stanza, void * const userdata)
+{
+	//printf("get the ping\n");
+	xmpp_stanza_t *reply;
+	xmpp_ctx_t *ctx = (xmpp_ctx_t*)userdata;
+
+	reply = xmpp_stanza_new(ctx);
+	xmpp_stanza_set_name(reply, "iq");
+	xmpp_stanza_set_type(reply, "result");
+	xmpp_stanza_set_id(reply, xmpp_stanza_get_id(stanza));
+	xmpp_stanza_set_attribute(reply, "to", xmpp_stanza_get_attribute(stanza, "from"));
+
+	xmpp_send(conn, reply);
+	xmpp_stanza_release(reply);
+	return 1;
+}
 
 int message_handler(xmpp_conn_t * const conn, xmpp_stanza_t * const stanza, void * const userdata)
 {
@@ -197,6 +213,7 @@ void conn_handler(xmpp_conn_t * const conn, const xmpp_conn_event_t status,
 	fprintf(stderr, "DEBUG: connected\n");
 	xmpp_handler_add(conn,version_handler, "jabber:iq:version", "iq", NULL, ctx);
 	xmpp_handler_add(conn,message_handler, NULL, "message", NULL, ctx);
+	xmpp_handler_add(conn,ping_handler, "urn:xmpp:ping", "iq", NULL, ctx);
 	
 	/* Send initial <presence/> so that we appear online to contacts */
 	pres = xmpp_stanza_new(ctx);
