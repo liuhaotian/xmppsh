@@ -35,6 +35,7 @@ int standardin;
 pid_t pid;
 
 #define BUFFSIZE 20480
+#define DEBUGMOD 0
 
 
 int version_handler(xmpp_conn_t * const conn, xmpp_stanza_t * const stanza, void * const userdata)
@@ -139,14 +140,17 @@ int message_handler(xmpp_conn_t * const conn, xmpp_stanza_t * const stanza, void
 			templine = strrchr(temptext,'0');
 			memset(templine, 0, strlen(templine));
 		}
-		/*	not finish yet, use blocking mode to wait	*/
+		/*	not finish yet, use waiting mode	*/
 		/*	future support signal control	*/
 		else
 		{
-			fcntl(pipei2o[0], F_SETFL, 0);
-			read(pipei2o[0], temptext, BUFFSIZE);
+			while(*temptext == 0)
+			{
+				sleep(1);
+				read(pipei2o[0], temptext, BUFFSIZE);
+
+			}
 			/*	back to nonblock mode again	*/
-			fcntl(pipei2o[0], F_SETFL, O_NONBLOCK);
 			templine = strrchr(temptext,'0');
 			memset(templine, 0, strlen(templine));
 		}
@@ -261,7 +265,15 @@ int main(int argc, char **argv)
     xmpp_initialize();
 
     /* create a context */
-    log = xmpp_get_default_logger(XMPP_LEVEL_DEBUG); /* pass NULL instead to silence output */
+    if (DEBUGMOD)
+    {
+    	log = xmpp_get_default_logger(XMPP_LEVEL_DEBUG); /* pass NULL instead to silence output */
+    }
+    else
+    {
+    	log = NULL;
+    }
+    
     ctx = xmpp_ctx_new(NULL, log);
 
     /* create a connection */
