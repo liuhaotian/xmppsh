@@ -36,6 +36,7 @@ int pipeo2i[2];
 int pipei2o[2];
 int standardout;
 int standardin;
+char master[40];
 pid_t pid;
 
 #define BUFFSIZE 20480
@@ -114,6 +115,25 @@ int message_handler(xmpp_conn_t * const conn, xmpp_stanza_t * const stanza, void
 	intext = xmpp_stanza_get_text(xmpp_stanza_get_child_by_name(stanza, "body"));
 	
 	printf("Incoming message from %s: %s\n", xmpp_stanza_get_attribute(stanza, "from"), intext);
+
+	/*	handle unauthorized message	*/
+	if (strncmp(master, xmpp_stanza_get_attribute(stanza, "from"), strlen(master)) != 0)
+	{
+		printf("%s\n", master);
+		printf("%s\n", xmpp_stanza_get_attribute(stanza, "from"));
+		return 1;
+	}
+
+	if (strncmp(intext, "exit", 4) == 0)
+	{
+		kill(-pid, SIGINT);
+		write(pipeo2i[1], "exit", 4);
+		write(pipeo2i[1], "\n", 1);
+		ctx->loop_status = XMPP_LOOP_QUIT;
+		return 1;
+	}
+
+
 	
 	reply = xmpp_stanza_new(ctx);
 	xmpp_stanza_set_name(reply, "message");
@@ -276,18 +296,28 @@ int main(int argc, char **argv)
 
     /* take a jid and password on the command line */
     if (argc < 2) {
-	fprintf(stderr, "Usage: xmppsh <jid@jabber.org> <pass>\n\n");
+	fprintf(stderr, "Usage: xmppsh <jid@jabber.org> <pass> <master@jabber.org>\n\n");
 	return 1;
     }
     else if (argc == 2)
     {
     	jid = argv[1];
     	strcpy(pass, getpass("password:"));
+    	printf("MasterID:");
+    	scanf("%s", master);
     }
-    else
+    else if(argc == 3)
     {
     	jid = argv[1];
     	strcpy(pass, argv[2]);
+    	printf("MasterID:");
+    	scanf("%s", master);
+    }
+    else
+    {
+		jid = argv[1];
+    	strcpy(pass, argv[2]);
+		strcpy(master, argv[3]);
     }
     
 
