@@ -24,6 +24,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/types.h>
+#include <signal.h>
+
 
 #include <strophe.h>
 
@@ -213,7 +216,6 @@ int main(int argc, char **argv)
     xmpp_log_t *log;
     char *jid;
     char pass[20];
-    int i;
 
 
 
@@ -303,6 +305,10 @@ int main(int argc, char **argv)
     /* release our connection and context */
     xmpp_conn_release(conn);
     xmpp_ctx_free(ctx);
+
+	kill(-pid, SIGINT);
+	write(pipeo2i[1], "exit", 4);
+	write(pipeo2i[1], "\n", 1);
 
     /* final shutdown of the library */
     xmpp_shutdown();
