@@ -80,7 +80,7 @@ parser_expat.o:
 	${CC} -c ${LIBSTROPHE}/parser_expat.c ${IFLAGS}
 
 parser_libxml2.o:
-	${CC} -c ${LIBSTROPHE}/parser_libxml2.c ${IFLAGS} -I/usr/include/libxml2
+	${CC} -c ${LIBSTROPHE}/parser_libxml2.c ${IFLAGS} -I/usr/include/libxml2 -Ibuild/include/libxml2
 
 sasl.o:
 	${CC} -c ${LIBSTROPHE}/sasl.c ${IFLAGS}
