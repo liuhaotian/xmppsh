@@ -8,8 +8,9 @@ PWD =
 
 
 LIBSTROPHE = libstrophe/src
-IFLAGS = -I${LIBSTROPHE}/.. -I/usr/local/include -I/usr/include
-CFLAGS = -lssl -lxml2 -lresolv -Ilibstrophe -Wall
+IFLAGS = -I${LIBSTROPHE}/.. -I${LIBSTROPHE} -I/usr/local/include -I/usr/include -Ibuild/include
+LFLAGS = -Lbuild/lib -lssl -lxml2 -lresolv
+CFLAGS = -Wall
 
 SRCS = auth.c conn.c ctx.c event.c handler.c hash.c jid.c md5.c \
 		parser_libxml2.c \
@@ -23,19 +24,19 @@ all: ${PROJ}
 obj: ${OBJS}
 
 bot: ${OBJS}
-	${CC} ${CFLAGS} -o $@ ${LIBSTROPHE}/../examples/bot.c ${OBJS}
+	${CC} ${CFLAGS} ${IFLAGS} ${LFLAGS} -o $@ ${LIBSTROPHE}/../examples/bot.c ${OBJS}
 
 active: ${OBJS}
-	${CC} ${CFLAGS} -o $@ ${LIBSTROPHE}/../examples/active.c ${OBJS}
+	${CC} ${CFLAGS} ${IFLAGS} ${LFLAGS} -o $@ ${LIBSTROPHE}/../examples/active.c ${OBJS}
 
 basic: ${OBJS}
-	${CC} ${CFLAGS} -o $@ ${LIBSTROPHE}/../examples/basic.c ${OBJS}
+	${CC} ${CFLAGS} ${IFLAGS} ${LFLAGS} -o $@ ${LIBSTROPHE}/../examples/basic.c ${OBJS}
 
 roster: ${OBJS}
-	${CC} ${CFLAGS} -o $@ ${LIBSTROPHE}/../examples/roster.c ${OBJS}
+	${CC} ${CFLAGS} ${IFLAGS} ${LFLAGS} -o $@ ${LIBSTROPHE}/../examples/roster.c ${OBJS}
 
 xmppsh: ${OBJS}
-	${CC} ${CFLAGS} -o $@ xmppsh.c ${OBJS}
+	${CC} ${CFLAGS} ${IFLAGS} ${LFLAGS} -o $@ xmppsh.c ${OBJS}
 
 
 
