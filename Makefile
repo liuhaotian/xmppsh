@@ -26,7 +26,7 @@ CFLAGS +=
 #Mac flags
 IFLAGS += -I/usr/include/libxml2
 LFLAGS +=
-CFLAGS += -DBIND_8_COMPAT
+CFLAGS += -DBIND_8_COMPAT -fno-stack-protector
 
 #Linux flags
 IFLAGS +=
