@@ -5,12 +5,39 @@ CD = cd
 MKDIR = mkdir
 PWD =
 
+IFLAGS =
+LFLAGS =
+CFLAGS =
 
 
-LIBSTROPHE = libstrophe/src
-IFLAGS = -I${LIBSTROPHE}/.. -I${LIBSTROPHE} -I/usr/local/include -I/usr/include -Ibuild/include
-LFLAGS = -Lbuild/lib -lssl -lxml2 -lresolv
-CFLAGS = -Wall
+
+LIBSTROPHE = libstrophe
+
+#system flags
+IFLAGS += -I/usr/local/include -I/usr/include
+LFLAGS += -lssl -lxml2 -lresolv
+CFLAGS += -O3
+
+#strophe flags
+IFLAGS += -I${LIBSTROPHE}/src -I${LIBSTROPHE}
+LFLAGS +=
+CFLAGS +=
+
+#Mac flags
+IFLAGS += -I/usr/include/libxml2
+LFLAGS +=
+CFLAGS += -DBIND_8_COMPAT
+
+#Linux flags
+IFLAGS +=
+LFLAGS +=
+CFLAGS +=
+
+#build flags
+IFLAGS += -Ibuild/include -Ibuild/include/libxml2
+LFLAGS += -Lbuild/lib
+CFLAGS +=
+
 
 SRCS = auth.c conn.c ctx.c event.c handler.c hash.c jid.c md5.c \
 		parser_libxml2.c \
@@ -53,61 +80,61 @@ xmppsh: ${OBJS}
 
 
 auth.o:
-	${CC} -c ${LIBSTROPHE}/auth.c ${IFLAGS}
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/auth.c
 
 conn.o:
-	${CC} -c ${LIBSTROPHE}/conn.c ${IFLAGS}
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/conn.c
 
 ctx.o:
-	${CC} -c ${LIBSTROPHE}/ctx.c ${IFLAGS}
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/ctx.c
 
 event.o:
-	${CC} -c ${LIBSTROPHE}/event.c ${IFLAGS}
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/event.c
 
 handler.o:
-	${CC} -c ${LIBSTROPHE}/handler.c ${IFLAGS}
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/handler.c
 
 hash.o:
-	${CC} -c ${LIBSTROPHE}/hash.c ${IFLAGS}
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/hash.c
 
 jid.o:
-	${CC} -c ${LIBSTROPHE}/jid.c ${IFLAGS}
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/jid.c
 
 md5.o:
-	${CC} -c ${LIBSTROPHE}/md5.c ${IFLAGS}
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/md5.c
 
 parser_expat.o:
-	${CC} -c ${LIBSTROPHE}/parser_expat.c ${IFLAGS}
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/parser_expat.c
 
 parser_libxml2.o:
-	${CC} -c ${LIBSTROPHE}/parser_libxml2.c ${IFLAGS} -I/usr/include/libxml2 -Ibuild/include/libxml2
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/parser_libxml2.c
 
 sasl.o:
-	${CC} -c ${LIBSTROPHE}/sasl.c ${IFLAGS}
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/sasl.c
 
 sha1.o:
-	${CC} -c ${LIBSTROPHE}/sha1.c ${IFLAGS}
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/sha1.c
 
 snprintf.o:
-	${CC} -c ${LIBSTROPHE}/snprintf.c ${IFLAGS}
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/snprintf.c
 
 sock.o:
-	${CC} -c ${LIBSTROPHE}/sock.c -DBIND_8_COMPAT
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/sock.c
 
 stanza.o:
-	${CC} -c ${LIBSTROPHE}/stanza.c ${IFLAGS}
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/stanza.c
 
 thread.o:
-	${CC} -c ${LIBSTROPHE}/thread.c ${IFLAGS}
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/thread.c
 
 tls_dummy.o:
-	${CC} -c ${LIBSTROPHE}/tls_dummy.c ${IFLAGS}
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/tls_dummy.c
 
 tls_openssl.o:
-	${CC} -c ${LIBSTROPHE}/tls_openssl.c ${IFLAGS}
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/tls_openssl.c
 
 util.o:
-	${CC} -c ${LIBSTROPHE}/util.c ${IFLAGS}
+	${CC} ${CFLAGS} ${IFLAGS} -c ${LIBSTROPHE}/src/util.c
 
 clean:
 	${RM} -f ${PROJ}

@@ -1,24 +1,24 @@
-#	Author:		Haotian Liu
-#			Northwestern University
-#			Department of EECS
+#   Author:     Haotian Liu
+#               Northwestern University
+#               Department of EECS
 #
-#	Email:		haotian#u.northwestern.edu
-#	
-#	Created:	Thu Mar  8 22:49:46 CST 2012
+#   Email:      haotian#u.northwestern.edu
+#
+#   Created:    Thu Mar  8 22:49:46 CST 2012
 #
 
 Xmppsh, a tiny shell via xmpp. Different from ssh, we can reach our 
 bash using every kind of IM, or even behind the firewall.
 
-Usage:	xmppsh <jid@jabber.org> <pass> <master@jabber.org>
-	
-	<jid>:		your jabber ID
-	<pass>:		jabber password
-	<master>:	the ID you allow to control xmppsh
-			Gtalk is OK, too.
+Usage: xmppsh <MasterID> <Robot ID> <Password>
+    MasterID: The main@jabber.org use to send out the cmd
+    Robot ID: The bash@jabber.org use to receive the cmd
+    Password: The bash@jabber.org Password
 
-Cmd:	
-	exit:	quit the entire program
+Gtalk is supported
+
+Cmd:
+    exit:   quit the entire program
 
 License:
-	BSD license
+    BSD license

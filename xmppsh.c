@@ -252,8 +252,7 @@ int main(int argc, char **argv)
     xmpp_ctx_t *ctx;
     xmpp_conn_t *conn;
     xmpp_log_t *log;
-    char *jid;
-    char pass[20];
+    char jid[20], pass[20];
 
 
 
@@ -294,30 +293,53 @@ int main(int argc, char **argv)
 
 
 
-    /* take a jid and password on the command line */
-    if (argc < 2) {
-	fprintf(stderr, "Usage: xmppsh <jid@jabber.org> <pass> <master@jabber.org>\n\n");
-	return 1;
+    /* take a master jid and password on the command line */
+    if(argc < 4){
+        printf("Usage: xmppsh <MasterID> <Robot ID> <Password>\n \
+                MasterID: The main@jabber.org use to send out the cmd\n \
+                Robot ID: The bash@jabber.org use to receive the cmd\n \
+                Password: The bash@jabber.org Password\n");
+    }
+    if (argc < 2) {        
+        printf("MasterID:");
+        scanf("%s", master);
+        printf("Robot ID:");
+        scanf("%s", jid);
+        strcpy(pass, getpass("Password:"));
     }
     else if (argc == 2)
     {
-    	jid = argv[1];
-    	strcpy(pass, getpass("password:"));
-    	printf("MasterID:");
-    	scanf("%s", master);
+        strcpy(master, argv[1]);
+        
+        //printf("MasterID:");
+        //scanf("%s", master);
+        printf("Robot ID:");
+        scanf("%s", jid);
+        strcpy(pass, getpass("Password:"));
     }
     else if(argc == 3)
     {
-    	jid = argv[1];
-    	strcpy(pass, argv[2]);
-    	printf("MasterID:");
-    	scanf("%s", master);
+    	strcpy(master, argv[1]);
+    	strcpy(jid, argv[2]);
+        
+        //printf("MasterID:");
+        //scanf("%s", master);
+        //printf("Robot ID:");
+        //scanf("%s", jid);
+        strcpy(pass, getpass("Password:"));
     }
     else
     {
-		jid = argv[1];
-    	strcpy(pass, argv[2]);
-		strcpy(master, argv[3]);
+		strcpy(master, argv[1]);
+    	strcpy(jid, argv[2]);
+		strcpy(pass, argv[3]);
+        
+        //printf("MasterID:");
+        //scanf("%s", master);
+        //printf("Robot ID:");
+        //scanf("%s", jid);
+        //strcpy(pass, getpass("Password:"));
+
     }
     
 
