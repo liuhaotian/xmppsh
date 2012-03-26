@@ -10,6 +10,16 @@
 Xmppsh, a tiny shell via xmpp. Different from ssh, we can reach our 
 bash using every kind of IM, or even behind the firewall.
 
+Build:
+
+    `make xmppsh`
+
+Dependence:
+    Mac:    require Xcode
+    Linux:  require libxml2 openssl
+
+
+
 Usage: xmppsh <MasterID> <Robot ID> <Password>
     MasterID: The main@jabber.org use to send out the cmd
     Robot ID: The bash@jabber.org use to receive the cmd
