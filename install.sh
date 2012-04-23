@@ -183,13 +183,13 @@ function configure_package {
 #   receives a build command line and a directory
 #
 function build_package {
-	BUILDCMD=${1}
-	BUILDDIR=${2}
+	BUILDPACKAGECMD=${1}
+	BUILDPACKAGEDIR=${2}
 
 	pushd . >/dev/null 2>&1
-	cd ${BUILDDIR}
-	${BUILDCMD}
-	echo "successfully ran '${BUILDCMD}' in ${BUILDDIR}"
+	cd ${BUILDPACKAGEDIR}
+	${BUILDPACKAGECMD}
+	echo "successfully ran '${BUILDPACKAGECMD}' in ${BUILDPACKAGEDIR}"
 	popd >/dev/null 2>&1
 }
 
