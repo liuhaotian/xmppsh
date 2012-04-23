@@ -15,7 +15,7 @@ LIBSTROPHE = libstrophe
 
 #system flags
 IFLAGS += -I/usr/local/include -I/usr/include
-LFLAGS += -lssl -lxml2 -lresolv
+LFLAGS += -lssl -lxml2 -lresolv -lcrypto
 CFLAGS += -O3
 
 #strophe flags
@@ -51,19 +51,19 @@ all: ${PROJ}
 obj: ${OBJS}
 
 bot: ${OBJS}
-	${CC} ${CFLAGS} ${IFLAGS} ${LFLAGS} -o $@ ${LIBSTROPHE}/../examples/bot.c ${OBJS}
+	${CC} ${CFLAGS} ${IFLAGS} -o $@ ${LIBSTROPHE}/../examples/bot.c ${OBJS} ${LFLAGS}
 
 active: ${OBJS}
-	${CC} ${CFLAGS} ${IFLAGS} ${LFLAGS} -o $@ ${LIBSTROPHE}/../examples/active.c ${OBJS}
+	${CC} ${CFLAGS} ${IFLAGS} -o $@ ${LIBSTROPHE}/../examples/active.c ${OBJS} ${LFLAGS}
 
 basic: ${OBJS}
-	${CC} ${CFLAGS} ${IFLAGS} ${LFLAGS} -o $@ ${LIBSTROPHE}/../examples/basic.c ${OBJS}
+	${CC} ${CFLAGS} ${IFLAGS} -o $@ ${LIBSTROPHE}/../examples/basic.c ${OBJS} ${LFLAGS}
 
 roster: ${OBJS}
-	${CC} ${CFLAGS} ${IFLAGS} ${LFLAGS} -o $@ ${LIBSTROPHE}/../examples/roster.c ${OBJS}
+	${CC} ${CFLAGS} ${IFLAGS} -o $@ ${LIBSTROPHE}/../examples/roster.c ${OBJS} ${LFLAGS}
 
 xmppsh: ${OBJS}
-	${CC} ${CFLAGS} ${IFLAGS} ${LFLAGS} -o $@ xmppsh.c ${OBJS}
+	${CC} ${CFLAGS} ${IFLAGS} -o $@ xmppsh.c ${OBJS} ${LFLAGS}
 
 
 
