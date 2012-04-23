@@ -16,9 +16,9 @@ OPENSSLFILE="openssl-1.0.0g.tar.gz"
 OPENSSLDIR="openssl-1.0.0g"
 OPENSSLURL="http://www.openssl.org/source/openssl-1.0.0g.tar.gz"
 
-LIBXML2FILE="libxml2-git-snapshot.tar.gz"
+LIBXML2FILE="libxml2-2.7.8.tar.gz"
 LIBXML2DIR="libxml2-2.7.8"
-LIBXML2URL="ftp://xmlsoft.org/libxml2/libxml2-git-snapshot.tar.gz"
+LIBXML2URL="ftp://xmlsoft.org/libxml2/libxml2-2.7.8.tar.gz"
 
 
 ###################################################################################################
@@ -77,7 +77,7 @@ echo "LDFLAGS set to: ${LDFLAGS}"
 # make
 #   how many jobs do we run concurrently?
 #   core count + 1
-export MAKE="make"
+export MAKE="make -s"
 export MAKEJOBS=$((`sysctl -n machdep.cpu.core_count | tr -d " "`+1))
 export CONCURRENTMAKE="${MAKE} -j${MAKEJOBS}"
 
@@ -236,15 +236,17 @@ fi
 get_file "${OPENSSLFILE}" "${DOWNLOADDIR}" "${OPENSSLURL}"
 extract_file "${TARGZ}" "${DOWNLOADDIR}/${OPENSSLFILE}" "${BUILDSRC}"
 #cd ${BUILDSRC}/${OPENSSLDIR}
-build_package "./config --prefix=${BUILDDIR}" "${BUILDSRC}/${OPENSSLDIR}"
-install_package "make install -s" "${BUILDSRC}/${OPENSSLDIR}"
+configure_package "./config ${CONFIGURECOMMONPREFIX}" "${BUILDSRC}/${OPENSSLDIR}"
+build_package "${MAKE}" "${BUILDSRC}/${OPENSSLDIR}"
+install_package "${MAKE} install" "${BUILDSRC}/${OPENSSLDIR}"
 
 # xml2
 get_file "${LIBXML2FILE}" "${DOWNLOADDIR}" "${LIBXML2URL}"
 extract_file "${TARGZ}" "${DOWNLOADDIR}/${LIBXML2FILE}" "${BUILDSRC}"
 #cd ${BUILDSRC}/${LIBXML2DIR}
-build_package "./configure --prefix=${BUILDDIR}" "${BUILDSRC}/${LIBXML2DIR}"
-install_package "${CONCURRENTMAKE} install -s" "${BUILDSRC}/${LIBXML2DIR}"
+configure_package "${CONFIGURE} ${CONFIGURECOMMONPREFIX}" "${BUILDSRC}/${LIBXML2DIR}"
+build_package "${CONCURRENTMAKE}" "${BUILDSRC}/${LIBXML2DIR}"
+install_package "${CONCURRENTMAKE} install" "${BUILDSRC}/${LIBXML2DIR}"
 
 
 
