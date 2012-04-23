@@ -17,7 +17,7 @@ OPENSSLDIR="openssl-1.0.0g"
 OPENSSLURL="http://www.openssl.org/source/openssl-1.0.0g.tar.gz"
 
 LIBXML2FILE="libxml2-git-snapshot.tar.gz"
-LIBXML2DIR="libxml2"
+LIBXML2DIR="libxml2-2.7.8"
 LIBXML2URL="ftp://xmlsoft.org/libxml2/libxml2-git-snapshot.tar.gz"
 
 
@@ -235,15 +235,16 @@ fi
 # openssl
 get_file "${OPENSSLFILE}" "${DOWNLOADDIR}" "${OPENSSLURL}"
 extract_file "${TARGZ}" "${DOWNLOADDIR}/${OPENSSLFILE}" "${BUILDSRC}"
-cd ${BUILDSRC}/${OPENSSLDIR}
+#cd ${BUILDSRC}/${OPENSSLDIR}
+build_package "./config --prefix=${BUILDDIR}" "${BUILDSRC}/${OPENSSLDIR}"
+install_package "make install -s" "${BUILDSRC}/${OPENSSLDIR}"
 
-if [ ! -f configured ] ; then
-	./config ${CONFIGURECOMMONPREFIX}
-	touch configured
-fi
-
-build_package "${CONCURRENTMAKE}" "${BUILDSRC}/${OPENSSLDIR}"
-
+# xml2
+get_file "${LIBXML2FILE}" "${DOWNLOADDIR}" "${LIBXML2URL}"
+extract_file "${TARGZ}" "${DOWNLOADDIR}/${LIBXML2FILE}" "${BUILDSRC}"
+#cd ${BUILDSRC}/${LIBXML2DIR}
+build_package "./configure --prefix=${BUILDDIR}" "${BUILDSRC}/${LIBXML2DIR}"
+install_package "${CONCURRENTMAKE} install -s" "${BUILDSRC}/${LIBXML2DIR}"
 
 
 
