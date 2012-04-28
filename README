@@ -27,6 +27,13 @@ Usage: xmppsh <MasterID> <Robot ID> <Password>
 
 Gtalk is supported
 
+Tested Env:
+    Mac OS Lion 10.7.3      (Haotian's)
+    Amazon AMI Linux        (Haotian's)
+    Ubuntu 11.10            (Haotian's)
+    Red Hat Enterprise      (Lukas's)
+    Fedora 16               (Lukas's)
+
 Cmd:
     exit:   quit the entire program
 
