@@ -114,22 +114,22 @@ int message_handler(xmpp_conn_t * const conn, xmpp_stanza_t * const stanza, void
 	
 	intext = xmpp_stanza_get_text(xmpp_stanza_get_child_by_name(stanza, "body"));
 	
-	printf("Incoming message from %s: %s\n", xmpp_stanza_get_attribute(stanza, "from"), intext);
+	xmpp_debug(conn->ctx, "xmpp", "Incoming message from %s: %s\n", xmpp_stanza_get_attribute(stanza, "from"), intext);
 
 	/*	handle unauthorized message	*/
 	if (strncmp(master, xmpp_stanza_get_attribute(stanza, "from"), strlen(master)) != 0)
 	{
-		printf("%s\n", master);
-		printf("%s\n", xmpp_stanza_get_attribute(stanza, "from"));
+		xmpp_debug(conn->ctx, "xmpp", "But only Master %s is allowed!\n", master);
 		return 1;
 	}
 
 	if (strncmp(intext, "exit", 4) == 0)
 	{
-		kill(-pid, SIGINT);
-		write(pipeo2i[1], "exit", 4);
-		write(pipeo2i[1], "\n", 1);
+		//kill(-pid, SIGINT);
+		//write(pipeo2i[1], "exit", 4);
+		//write(pipeo2i[1], "\n", 1);
 		ctx->loop_status = XMPP_LOOP_QUIT;
+		xmpp_debug(conn->ctx, "xmpp", "exiting");
 		return 1;
 	}
 
@@ -192,7 +192,13 @@ int message_handler(xmpp_conn_t * const conn, xmpp_stanza_t * const stanza, void
 			}
 			/*	back to nonblock mode again	*/
 			templine = strrchr(temptext,'0');
-			memset(templine, 0, strlen(templine));
+			if (templine == NULL)
+			{
+				xmpp_debug(conn->ctx, "xmpp", "BASH: unsuccessfully execute cmd: %s, return: %s\n", intext, temptext);
+				sprintf(temptext, "\"%s\" command not found", intext);
+			}
+			else
+				memset(templine, 0, strlen(templine));
 		}
 
 
@@ -284,6 +290,7 @@ int main(int argc, char **argv)
 				dup(pipei2o[1]);
 				
 				execvp("bash", NULL);
+				xmpp_debug(conn->ctx, "xmpp", "Bash terminated!");
 				exit(0);
 	     	}
 		}
